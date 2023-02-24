@@ -4,4 +4,4 @@ I like to experiment with coding so you can expect a few little projects in this
 
 # Finished mini projects:
 ## Javascript
-* Interactive background
+* [Interactive background](https://github.com/elpharae/Portfolio/tree/main/JavaScript/interactive%20website%20background)
