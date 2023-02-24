@@ -1,23 +1,20 @@
-/*
-PC ONLY
-*/
-
-//general dot and line properties
-const dotAmountMin = 100;
-const dotAmountMax = 150;
-const dotRadiusMin = 5;
-const dotRadiusMax = 15;
-const lineThickness = 2;
-
-// this is the radius of a circle that the center of which is the user's cursor
-// all dots that are within this radius will draw a line towards the cursor
-const cursorRadius = 200;
+const canvas = document.getElementById('background');
+const inputRadius = document.getElementById('cursorRadiusInput');
+const reset = document.getElementById('reset');
+const ctx = canvas.getContext('2d');
 
 let dots = [];
 let lines = [];
+// this is the radius of a circle that the center of which is the user's cursor
+// all dots that are within this radius will draw a line towards the cursor
+let cursorRadius = inputRadius.value;
 
-const canvas = document.getElementById("background");
-const ctx = canvas.getContext("2d");
+// general dot and line properties
+const dotAmountMin = 300;
+const dotAmountMax = 500;
+const dotRadiusMin = 5;
+const dotRadiusMax = 15;
+const lineThickness = 2;
 
 // this function creates new dots upon entering the website
 function initDots() {
@@ -109,7 +106,9 @@ function init() {
     drawDots();
 }
 
-document.getElementById('reset').addEventListener('click', init);
+reset.addEventListener('click', init);
+
+inputRadius.addEventListener('change', (event) => cursorRadius = event.target.value);
 
 window.onload = init;
 
