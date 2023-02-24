@@ -3,3 +3,37 @@
     margin: 0;
     box-sizing: border-box;
 }
+
+.content {
+    display: flex;
+    position: relative;
+}
+
+.container {
+    padding: 1rem;
+    position: absolute;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container > #reset {
+    border: none;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    background-color: rgba(255, 255, 255, 0.5);
+    font-size: 2rem;
+    text-transform: uppercase;
+    width: fit-content;
+
+    transition: 240ms;
+}
+
+.container > #reset:hover {
+    color: white;
+}
+
+canvas {
+    background: linear-gradient(to bottom left, rgb(27, 154, 238), rgb(42, 202, 128));
+}
