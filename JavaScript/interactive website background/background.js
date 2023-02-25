@@ -1,28 +1,32 @@
 const canvas = document.getElementById('background');
-const inputRadius = document.getElementById('cursorRadiusInput');
 const reset = document.getElementById('reset');
+const inputLineCount = document.getElementById('lineCount');
 const ctx = canvas.getContext('2d');
 
-let dots = [];
-let lines = [];
 // this is the radius of a circle that the center of which is the user's cursor
 // all dots that are within this radius will draw a line towards the cursor
-let cursorRadius = inputRadius.value;
+let dots = [];
+let lines = [];
+let width = window.innerWidth;
+let height = window.innerHeight;
+let lineCount = inputLineCount.value;
 
 // general dot and line properties
-const dotAmountMin = 300;
-const dotAmountMax = 500;
+const dotAmountMin = 40;
+const dotAmountMax = 60;
 const dotRadiusMin = 5;
 const dotRadiusMax = 15;
-const lineThickness = 2;
+const lineThickness = 5;
+
+const randomValue = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+const distance = (aX, aY, bX, bY) => Math.sqrt(Math.pow(aX - bX, 2) + Math.pow(aY - bY, 2));
 
 // this function creates new dots upon entering the website
-function initDots() {
+const initDots = () => {
     dots = [];
 
-    const dotAmount = Math.floor(
-        Math.random() * (dotAmountMax - dotAmountMin + 1) + dotAmountMin
-    );
+    const dotAmount = randomValue(dotAmountMin, dotAmountMax);
+    console.log(dotAmount);
 
     for (let i = 0; i < dotAmount; i++) {
         // the coordinates are stored as % values of width and height
@@ -32,10 +36,7 @@ function initDots() {
         const x = Math.random();
         const y = Math.random();
 
-        const radius = Math.floor(
-            Math.random() * (dotRadiusMax - dotRadiusMin + 1) + dotRadiusMin
-        );
-
+        const radius = randomValue(dotRadiusMin, dotRadiusMax);
         const dot = new Dot(x, y, radius);
 
         dots.push(dot);
@@ -43,14 +44,13 @@ function initDots() {
 }
 
 // this function draws dots onto the canvas background
-function drawDots() {
-    // any existing lines are first cleared
-    lines = [];
+const drawDots = () => {
+
+    width = window.innerWidth;
+    height = window.innerHeight;
 
     // drawDots is called every time the window size changes
     // so the canvas size has to be adjusted on every resize event
-    const width = window.innerWidth;
-    const height = window.innerHeight;
     canvas.width = width;
     canvas.height = height;
 
@@ -61,44 +61,37 @@ function drawDots() {
 }
 
 // this function draws lines from cursor's surrounding dots towards the cursor
-function drawLines(event) {
-    const width = canvas.width;
-    const height = canvas.height;
+const drawLines = (event) => {
+    lines = []; // drawLines is called repeatedly, therefore lines array must be emptied
 
     const mouseX = event.clientX / width;
     const mouseY = event.clientY / height;
 
-    dots.forEach((dot) => {
-        // evaluate the distance to all existing dots on the canvas
-        const distance = Math.sqrt(
-            Math.pow(dot.x * width - mouseX * width, 2) +
-                Math.pow(dot.y * height - mouseY * height, 2)
-        );
+    // sort all existing dots by distance from cursor
+    dots.sort((dot1, dot2) => {
+        const dist1 = distance(dot1.x * width, dot1.y * height, mouseX * width, mouseY * height);
+        const dist2 = distance(dot2.x * width, dot2.y * height, mouseX * width, mouseY * height);
 
-        // if the dot is "around" the cursor
-        // create a new line and push it to the lines array in order for it to be drawn on canvas
-        if (distance <= cursorRadius) {
-            const line = new Line(dot.x, dot.y, mouseX, mouseY, lineThickness);
-
-            lines.push(line);
-        }
+        return dist1 > dist2 ? 1 : -1;
     });
 
-    // lines are drawn on canvas
+    // create lines by taking the nearest lineCount dots and connecting them to the cursor
+    for (let i = 0; i < lineCount; i++) {
+        const line = new Line(dots[i].x, dots[i].y, mouseX, mouseY, lineThickness);
+
+        lines.push(line);
+    }
+
+    // draw lines
     lines.forEach((line) => {
         line.draw();
     });
 }
 
-function redraw(event) {
-    // clear the canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // redraw the dots
-    drawDots();
-
-    // draw new lines
-    drawLines(event);
+const redraw = (event) => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // clear the canvas
+    drawDots(); // redraw the dots
+    drawLines(event); // draw new lines
 }
 
 function init() {
@@ -107,13 +100,10 @@ function init() {
 }
 
 reset.addEventListener('click', init);
-
-inputRadius.addEventListener('change', (event) => cursorRadius = event.target.value);
+inputLineCount.addEventListener('change', () => lineCount = inputLineCount.value);
 
 window.onload = init;
-
 window.addEventListener('resize', drawDots);
-
 window.addEventListener('mousemove', (event) => redraw(event));
 
 class Dot {

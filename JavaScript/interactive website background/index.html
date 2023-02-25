@@ -11,8 +11,16 @@
     <div class="content">
         <canvas id="background"></canvas>
         <div class="container">
-            <button id="reset">Reset dots</button>   
-            <input type="number" id="cursorRadiusInput" placeholder="Cursor radius" value=150>
+            <div class="about block">
+                <div class="block-heading">
+                    Interactive background
+                </div>
+                The purpose of this website is to showcase, test and play around with this interactive website background design.    
+            </div>
+            <div class="controls block">
+                <button id="reset">Reset dots</button>
+                <input type="number" id="lineCount" min="2" max="50" value="8" placeholder="Line count">
+            </div>
         </div>
     </div>
     <script src="background.js"></script>
